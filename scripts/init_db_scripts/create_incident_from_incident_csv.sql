@@ -1,0 +1,56 @@
+﻿SELECT ST_MakePoint(-71.1043443253471, 42.3150676015829);
+
+drop table incident;
+CREATE TABLE incident (
+    id serial PRIMARY KEY,
+    DC_DIST varchar(255),
+    SECTOR varchar(255),
+    DISPATCH_DATE_TIME varchar(255),
+    DISPATCH_DATE varchar(255),
+    DISPATCH_TIME varchar(255),
+    HOUR varchar(255),
+    DC_KEY varchar(255),
+    LOCATION_BLOCK varchar(255),
+    UCR_GENERAL varchar(255),
+    OBJECTID varchar(255),
+    TEXT_GENERAL_CODE varchar(255),
+    SHAPE varchar(255),
+    POINT_X varchar(255),
+    POINT_Y varchar(255),
+    point geometry
+);
+
+INSERT INTO incident (
+	DC_DIST,
+	SECTOR,
+	DISPATCH_DATE_TIME,
+	DISPATCH_DATE,
+	DISPATCH_TIME,
+	HOUR,
+	DC_KEY,
+	LOCATION_BLOCK,
+	UCR_GENERAL,
+	OBJECTID,
+	TEXT_GENERAL_CODE,
+	SHAPE,
+	POINT_X,
+	POINT_Y,
+	point
+    ) (SELECT 
+	DC_DIST,
+	SECTOR,
+	DISPATCH_DATE_TIME,
+	DISPATCH_DATE,
+	DISPATCH_TIME,
+	HOUR,
+	DC_KEY,
+	LOCATION_BLOCK,
+	UCR_GENERAL,
+	OBJECTID,
+	TEXT_GENERAL_CODE,
+	SHAPE,
+	POINT_X,
+	POINT_Y,
+	ST_MakePoint(POINT_X,POINT_Y)
+	FROM incident_csv
+	);
