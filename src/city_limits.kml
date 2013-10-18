@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
 <Document><Folder><name>city_limits</name>
+<Style id="1">
+        <LineStyle>
+            <color>50000000</color>
+            <width>10</width>
+        </LineStyle>
+        <PolyStyle>
+            <color>50FFFFFF</color>
+        </PolyStyle>
+    </Style>
   <Placemark>
-	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+    <styleUrl>#1</styleUrl>
 	<ExtendedData><SchemaData schemaUrl="#city_limits">
 		<SimpleData name="AREA">3977360954.818</SimpleData>
 		<SimpleData name="PERIMETER">395373.385</SimpleData>
