@@ -4,18 +4,24 @@ The first step was to use PostGres 9.2 to
 
 The SQL scripts are under scripts.
 
-The PostGis SQL highlight of the endeavor follows, which joins the septa and crime data together  and returns incident counts associated with the rail stops.
+The PostGis SQL highlight of the endeavor follows, which joins the septa and crime data together  and returns incident counts associated with the rail stops.  I'm a little fuzzy on what the .0015 equates too.  I think it could be 150 meters.  It comes out to about the block.
 ```
-SELECT row_to_json(incident.*)
-FROM incident, rail_stops 
-WHERE 
-	ST_DWithin( ST_MakePoint( rail_stops.stop_lon,rail_stops.stop_lat ), incident.point, .0015 ) = 't' 
-	AND ( 
-		   incident.text_general_code LIKE '%Robbery%' 
-		OR incident.text_general_code LIKE '%Assault%' 
-		OR incident.text_general_code LIKE '%Rape%' 
-		OR incident.text_general_code LIKE '%Homicide%' 
-	) 
+SELECT row_to_json( row ) from (
+	SELECT *, (
+		SELECT COUNT(*) 
+		FROM incident
+		WHERE 
+			ST_DWithin( ST_MakePoint( rail_stops.stop_lon,rail_stops.stop_lat ), incident.point, .0015 ) = 't' 
+			AND ( 
+				   incident.text_general_code LIKE '%Robbery%' 
+				OR incident.text_general_code LIKE '%Assault%' 
+				OR incident.text_general_code LIKE '%Rape%' 
+				OR incident.text_general_code LIKE '%Homicide%' 
+			) 
+		)
+	AS count 
+	FROM rail_stops 
+) row;
 ```
 
 
