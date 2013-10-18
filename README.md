@@ -6,4 +6,4 @@ The SQL scripts are under scripts.
 
 The html mashup is under src.
 
-The live demo is located at <a href="http://jimrsmiley.github.io/septa-regiona-rail-crime-heatmap/">http://jimrsmiley.github.io/septa-regiona-rail-crime-heatmap/</a>
+The live demo is located at <a href="http://jimrsmiley.github.io/septa-regional-rail-crime-heatmap/">http://jimrsmiley.github.io/septa-regional-rail-crime-heatmap/</a>
