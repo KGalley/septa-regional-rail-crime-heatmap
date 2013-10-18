@@ -6,10 +6,16 @@ The SQL scripts are under scripts.
 
 The PostGis SQL highlight of the endeavor follows, which joins the septa and crime data together  and returns incident counts associated with the rail stops.
 ```
-SELECT *, (
-	SELECT COUNT(*) FROM incident WHERE ST_DWithin( ST_MakePoint( rail_stops.stop_lon,rail_stops.stop_lat ), incident.point, 1 ) = 't' AND incident.text_general_code LIKE '%Robbery%' AND rail_stops.id = 5
-	) AS count 
-FROM rail_stops;
+SELECT row_to_json(incident.*)
+FROM incident, rail_stops 
+WHERE 
+	ST_DWithin( ST_MakePoint( rail_stops.stop_lon,rail_stops.stop_lat ), incident.point, .0015 ) = 't' 
+	AND ( 
+		   incident.text_general_code LIKE '%Robbery%' 
+		OR incident.text_general_code LIKE '%Assault%' 
+		OR incident.text_general_code LIKE '%Rape%' 
+		OR incident.text_general_code LIKE '%Homicide%' 
+	) 
 ```
 
 
