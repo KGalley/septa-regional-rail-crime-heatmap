@@ -1,0 +1,132 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Regiona Rail Station Crime Heat Map</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        
+        <!--    Leaflet
+        ------------------------------------------------------->
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+        <!--[if lte IE 8]>
+            <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.ie.css" />
+        <![endif]-->
+        <script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+        
+        <!--   Leaflet Plugin
+        ------------------------------------------------------->
+        <script src="/leaflet-plugins/layer/vector/KML.js"></script>
+        
+        <!--    jQuery
+        -------------------------------------------------------->
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+        <!--    HeatMap.js mod
+        -------------------------------------------------------->
+        <script src="js/heatmapjs/src/QuadTree.js"></script>
+        <script src="js/heatmapjs/src/heatmap.js"></script>
+        <script src="js/heatmapjs/src/heatmap-leaflet-jsmiley-edit.js"></script>
+        
+        
+        <!--    jQueryUI
+        -------------------------------------------------------->
+        <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        
+        
+        <link href="style.css" rel="stylesheet" />
+        
+    </head>
+    <body>
+        <a href="https://github.com/jimRsmiley/septa-regional-rail-crime-heatmap"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 999" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+        <div id="small-screen-explanation" class="info-box">
+            <h1>Violent Crime Heatmap Septa's Regional Rail Stops</h1>
+            <div>
+                This is a demonstration heatmap of crime counts for violent crimes within a block or so of Septa's regional rail trains from 2007 through early October 2013.  That includes homicides, robberies, assaults, and rapes.<br/>
+<br/>
+The goal is to do this for every bus and rail route in the city.<br/>
+<br/>
+Project code and documentation is availabe <a href="https://github.com/jimRsmiley/septa-regional-rail-crime-heatmap">here</a>.
+            </div>
+        </div>
+        <div id="large-screen-explanation" class="draggable info-box"><h1>Violent Crime Heatmap Septa's Regional Rail Stops</h1>
+            <div>
+                This is a demonstration heatmap of crime counts for violent crimes within a block or so of Septa's regional rail trains from 2007 through early October 2013.  That includes homicides, robberies, assaults, and rapes.<br/>
+<br/>
+The goal is to do this for every bus and rail route in the city.<br/>
+<br/>
+Project code and documentation is availabe <a href="https://github.com/jimRsmiley/septa-regional-rail-crime-heatmap">here</a>.<span class="drag-me-info">(drag me)</span>
+            </div>
+        </div>
+        <div id="map"></div>
+        <script>
+            
+            $( document ).ready( function() {
+                
+                $('.draggable').draggable();
+                
+                var map = L.map('map').setView([39.966888, -75.138803], 11);
+                
+                // add an OpenStreetMap tile layer
+                L.tileLayer('http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png', {
+                    key: "15b9654db9074459a87d7646af8c565b",
+                    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+                    styleId: 22677
+                }).addTo(map);
+                
+                var routes      = new L.KML("regionalrail.kml", {async: true}).addTo(map);
+                var cityLimits  = new L.KML("city_limits.kml", {async: true}).addTo(map);
+                //map.addLayer( routes );
+                
+                $.getJSON( 'regional_rail_stop_crime_count.json', function( data ) {
+                    console.log( data );
+
+                    heatmapPoints = new Array();
+                    jQuery.each(data.stations, function() {
+                        rail_stop = this;
+                        
+                        lat = rail_stop.stop_lat;
+                        lng = rail_stop.stop_lon;
+                        crimeCount = rail_stop.count;
+                        stationName = rail_stop.stop_name;
+                        
+                        if( crimeCount > 0 ) {
+                            var marker = L.marker([ lat, lng ]).bindPopup("<b>"+stationName+"</b><br>Violent Crimes(2007 to 2013): "+crimeCount).addTo(map);
+                            
+                            heatmapPoints.push( { "lat":lat, "lon":lng, "value": crimeCount } );
+                        }
+                    });
+                    
+                    var heatmapLayer = L.TileLayer.heatMap({
+                        radius: 50,
+                        opacity: 0.8,
+                        gradient: {
+                            0: "rgb(0,0,0)",
+                            0.45: "rgb(0,0,255)",
+                            0.55: "rgb(0,255,255)",
+                            0.65: "rgb(0,255,0)",
+                            0.75: "yellow",
+                            1.0: "rgb(255,0,0)"
+                        }
+                    });
+
+                    console.log( heatmapPoints );
+                    heatmapLayer.setData(186,heatmapPoints);
+                    
+                    heatmapLayer.addTo(map);    
+                }).fail(function( err, ajaxOptions, thrownError) {
+                    console.log( 'ajax error, messages follow' );
+                    console.log( err.status );
+                    console.log( thrownError );
+                  });
+            });
+        </script>
+    </body>
+    
+    
+</html>
