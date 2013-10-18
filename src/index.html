@@ -28,19 +28,49 @@ and open the template in the editor.
 
         <!--    HeatMap.js mod
         -------------------------------------------------------->
-        <script src="/js/heatmapjs/src/QuadTree.js"></script>
-        <script src="/js/heatmapjs/src/heatmap.js"></script>
-        <script src="/js/heatmapjs/src/heatmap-leaflet-jsmiley-edit.js"></script>
+        <script src="js/heatmapjs/src/QuadTree.js"></script>
+        <script src="js/heatmapjs/src/heatmap.js"></script>
+        <script src="js/heatmapjs/src/heatmap-leaflet-jsmiley-edit.js"></script>
+        
+        
+        <!--    jQueryUI
+        -------------------------------------------------------->
+        <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet"/>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        
         
         <link href="style.css" rel="stylesheet" />
         
     </head>
     <body>
+        <a href="https://github.com/jimRsmiley/septa-regional-rail-crime-heatmap"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 999" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+        <div id="small-screen-explanation" class="info-box">
+            <h1>Violent Crime Heatmap Septa's Regional Rail Stops</h1>
+            <div>
+                This is a demonstration heatmap of crime counts for violent crimes within a block or so of Septa's regional rail trains from 2007 through early October 2013.  That includes homicides, robberies, assaults, and rapes.<br/>
+<br/>
+The goal is to do this for every bus and rail route in the city.<br/>
+<br/>
+Project code and documentation is availabe <a href="https://github.com/jimRsmiley/septa-regional-rail-crime-heatmap">here</a>.
+            </div>
+        </div>
+        <div id="large-screen-explanation" class="draggable info-box"><h1>Violent Crime Heatmap Septa's Regional Rail Stops</h1>
+            <div>
+                This is a demonstration heatmap of crime counts for violent crimes within a block or so of Septa's regional rail trains from 2007 through early October 2013.  That includes homicides, robberies, assaults, and rapes.<br/>
+<br/>
+The goal is to do this for every bus and rail route in the city.<br/>
+<br/>
+Project code and documentation is availabe <a href="https://github.com/jimRsmiley/septa-regional-rail-crime-heatmap">here</a>.<span class="drag-me-info">(drag me)</span>
+            </div>
+        </div>
         <div id="map"></div>
         <script>
             
             $( document ).ready( function() {
-                var map = L.map('map').setView([39.952335, -75.163789], 12);
+                
+                $('.draggable').draggable();
+                
+                var map = L.map('map').setView([39.966888, -75.138803], 11);
                 
                 // add an OpenStreetMap tile layer
                 L.tileLayer('http://{s}.tile.cloudmade.com/{key}/{styleId}/256/{z}/{x}/{y}.png', {
@@ -63,9 +93,11 @@ and open the template in the editor.
                         lat = rail_stop.stop_lat;
                         lng = rail_stop.stop_lon;
                         crimeCount = rail_stop.count;
+                        stationName = rail_stop.stop_name;
                         
                         if( crimeCount > 0 ) {
-                            var marker = L.marker([ lat, lng ]).addTo(map);
+                            var marker = L.marker([ lat, lng ]).bindPopup("<b>"+stationName+"</b><br>Violent Crimes(2007 to 2013): "+crimeCount).addTo(map);
+                            
                             heatmapPoints.push( { "lat":lat, "lon":lng, "value": crimeCount } );
                         }
                     });
@@ -86,13 +118,7 @@ and open the template in the editor.
                     console.log( heatmapPoints );
                     heatmapLayer.setData(186,heatmapPoints);
                     
-                    var overlayMaps = {
-                    'Heatmap': heatmapLayer
-                };
- 
-                var controls = L.control.layers(null, overlayMaps, {collapsed: false});
-                controls.addTo(map);
-                heatmapLayer.addTo(map);    
+                    heatmapLayer.addTo(map);    
                 }).fail(function( err, ajaxOptions, thrownError) {
                     console.log( 'ajax error, messages follow' );
                     console.log( err.status );

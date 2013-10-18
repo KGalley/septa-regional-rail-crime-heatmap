@@ -11,3 +11,5 @@ The live demo is located at <a href="http://jimrsmiley.github.io/septa-regional-
 A few notes:
 
 Airport crime data didn't seem to come through, given the regional rail lat, lng.
+
+Hat Tip to <a href="http://www.davewalk.net/">Dave Walk</a>'s <a href="http://www.phlcrimemapper.com/">PHL Crime Mapper</a>, who's theme I totally ripped off.
